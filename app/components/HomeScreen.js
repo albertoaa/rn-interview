@@ -39,8 +39,6 @@ const HomeScreen = () => {
   };
 
   const addPhoto = async () => {
-    console.log(addPhoto);
-    console.log(selectedMemberId);
     const photo = {
       id: memberPhotos[memberPhotos.length - 1].id + 1,
       memberId: selectedMemberId,
@@ -52,11 +50,17 @@ const HomeScreen = () => {
       centerY: 400,
     };
 
-    const response = await axios.post(
+    await axios.post(
       `http://localhost:3000/member/${selectedMemberId}/photos`,
       photo,
       {},
     );
+
+    getPhotos(selectedMemberId);
+  };
+
+  const deletePhoto = async (photoId) => {
+    await axios.delete(`http://localhost:3000/photos/${photoId}`);
 
     getPhotos(selectedMemberId);
   };
@@ -84,7 +88,12 @@ const HomeScreen = () => {
           <FlatList
             data={memberPhotos}
             renderItem={({item}) => {
-              return <Item item={item} />;
+              return (
+                <Item
+                  item={item}
+                  deletePhoto={(photoId) => deletePhoto(photoId)}
+                />
+              );
             }}
             numColumns={3}
             keyExtractor={(item, index) => index.toString()}
